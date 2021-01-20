@@ -1,0 +1,11 @@
+.Pencil{
+
+}
+
+.Pencil img{
+    width: 30px;
+    height: 30px;
+    display: flex;
+    box-sizing: border-box;
+    border-radius: 5px;
+}
