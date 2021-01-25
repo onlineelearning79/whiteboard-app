@@ -14,6 +14,7 @@ export default (context) => {
       size,
       points: [{ x, y }]
     };
+    console.log(color);
     return [stroke];
   };
 

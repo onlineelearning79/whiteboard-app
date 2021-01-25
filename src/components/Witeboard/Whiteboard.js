@@ -102,25 +102,6 @@ class Whiteboard extends Component {
         tool = "pencil";
         this.initTool(tool);
         this.ctx.restore();
-      // }else if(tool == "text"){
-      //   console.log("text");
-      //   console.log(this.canvas);
-      //   this.canvas.addEventListener('click', function(e){
-      //     if (this.textarea == null) {
-      //       this.textarea = document.createElement('textarea');
-      //       this.textarea.className = 'info';
-      //       this.textarea.addEventListener('mousedown', this.mouseDownOnTextarea);
-      //       this.canvas.appendChild(this.textarea);
-      //     }
-      //     // var x = e.clientX - this.canvas.offsetLeft,
-      //     //     y = e.clientY - this.canvas.offsetTop;
-      //     //     this.textarea.value = "x: " + x + " y: " + y;
-      //     //     this.textarea.style.top = e.clientY + 'px';
-      //     //     this.textarea.style.left = e.clientX + 'px';
-      //   }, false);
-
-      //   console.log(this.getCursorPosition());
-      //   this.tool.draw(items[0], this.props.animate);
       }else if(tool == "zoomin"){
         console.log(tool);
         console.log(this.canvas.clientX +" " + this.canvas.clientY);
@@ -141,63 +122,6 @@ class Whiteboard extends Component {
       this.initTool(tool);
       }
     }
-
-    // addTextArea = (e) => {
-    //   // console.log(this.props.tool);
-    //   // if(this.props.tool != "text"){
-    //   //   console.log("not  text");
-    //   //   return;
-    //   // }
-
-    //   // this.canvas.addEventListener('click', function(e){
-    //   //   if (this.textarea == null) {
-    //   //     this.textarea = document.createElement('textarea');
-    //   //     this.textarea.className = 'info';
-    //   //     this.textarea.addEventListener('mousedown', this.mouseDownOnTextarea);
-    //   //     this.canvas.appendChild(this.textarea);
-    //   //   }
-    //   //   var x = e.clientX - this.canvas.offsetLeft,
-    //   //       y = e.clientY - this.canvas.offsetTop;
-    //   //       this.textarea.value = "x: " + x + " y: " + y;
-    //   //       this.textarea.style.top = e.clientY + 'px';
-    //   //       this.textarea.style.left = e.clientX + 'px';
-    //   // }, false);
-
-    //   var input = document.createElement('input');
-
-    //     input.type = 'text';
-    //     input.style.position = 'fixed';
-    //     input.style.left = (e.clientX - 4) + 'px';
-    //     input.style.top = (e.clientY - 4) + 'px';
-
-    //     input.onkeydown = this.handleEnter;
-
-    //     document.body.appendChild(input);
-
-    //     input.focus();
-
-    //     // hasInput = true;
-
-
-    //   console.log("hai text");
-    // }
-
-    // handleEnter = (e) => {
-    //     var keyCode = e.keyCode;
-    //     if (keyCode === 13) {
-    //         this.drawText(e, this.value);
-    //         this.canvas.removeChild(this.canvas.lastChild.nodeType);
-            
-    //         // hasInput = false;
-    //     }
-    // }
-    // drawText(e, txt) {
-    //     // this.ctx.textBaseline = 'top';
-    //     // this.ctx.textAlign = 'left';
-    //     // this.ctx.font = font;
-    //     this.ctx.fillText(txt, e.clientY, e.clientY - 4);
-        
-    // }
   
     initTool(tool) {
       this.tool = this.props.toolsMap[tool](this.ctx);
@@ -242,22 +166,24 @@ class Whiteboard extends Component {
     render() {
       const {width, height, canvasClassName} = this.props;
       return (
-        <canvas style={{
-          border:"1px solid black",
-          boxShadow: "10px 5px grey",
-          borderRadius: "5px"
-      }}
-          id="myCanvas"
-          ref={(canvas) => { this.canvasRef = canvas; }}
-          className={canvasClassName}
-          onMouseDown={this.onMouseDown}
-          onMouseMove={this.onMouseMove}
-          onMouseOut={this.onMouseUp}
-          onMouseUp={this.onMouseUp}
-          // onClick = {this.addTextArea}
-          width={width}
-          height={height}
-        />
+        <div className="myCanvasDraw">
+          <canvas style={{
+            border:"1px solid black",
+            boxShadow: "10px 5px grey",
+            borderRadius: "5px"
+        }}
+            id="myCanvas"
+            ref={(canvas) => { this.canvasRef = canvas; }}
+            className={canvasClassName}
+            onMouseDown={this.onMouseDown}
+            onMouseMove={this.onMouseMove}
+            onMouseOut={this.onMouseUp}
+            onMouseUp={this.onMouseUp}
+            // onClick = {this.addTextArea}
+            width={width}
+            height={height}
+          />
+        </div>
       )
     }
     

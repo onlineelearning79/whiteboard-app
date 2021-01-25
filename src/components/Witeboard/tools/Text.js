@@ -39,94 +39,154 @@ export default (context) => {
       fillText,
       points: [{ x, y }]
     };
+    console.log("color:" + color);
     // drawLine(stroke, x, y, "Santosh");
     const newPoint = { x, y };
     const start = stroke.points.slice(-1)[0];
-    const {top, left} = context.canvas.getBoundingClientRect();
+    const {top, left, bottom, right} = context.canvas.getBoundingClientRect();
     
 
     context.canvas.addEventListener('click', function(e){
         const canvasCoords = offset(left, top);
-        console.log(offset(left, top));
-        console.log("canvasCoords:"+canvasCoords.top);
-        // console.log("canvasleft:"+canvasleft);
 
         if (textarea == null) {
           textarea = document.createElement('input');
           textarea.className = 'info';
           textarea.id = "canvasTextInput";
+        }
 
-          
-          
-        //   textarea.addEventListener('mousedown', mouseDownOnTextarea);
-          console.log(context.canvas.getBoundingClientRect().left);
-          console.log(context.canvas.getBoundingClientRect().top);
-          
+        let x1 = canvasCoords.left + x, y1 = canvasCoords.top + y;
+        let clickX = x, clickY = y;
+
+        let textreaWidth = "100";
+        let textreaHeight = "40";
+        textarea.style.width = "100px";
+        textarea.style.height = "40px";
+        if((parseInt(x) + parseInt(canvasCoords.left) + parseInt(textreaWidth)) > right){
+            console.log("exceeded canvas right");
+            x1 = (parseInt(x) + parseInt(canvasCoords.left) - parseInt(textreaWidth));
+        }
+
+        if((parseInt(y) + parseInt(canvasCoords.top) + parseInt(textreaHeight)) > bottom){
+            console.log("exceeded canvas right");
+            y1 = (parseInt(y) + parseInt(canvasCoords.top) - parseInt(textreaHeight));
         }
 
         textarea.addEventListener('keydown', (e) => {
             let strok = {
-                fillText: e.target.value
+                fillText: e.target.value,
+                fillColor: e.target.style.color, 
+                points: [{x1, y1}],
+                canvasOrigin: [{left, top}],
+                textareaDimensions: [{textreaWidth, textreaHeight}]
             };
+        
             var keyCode = e.keyCode;
-            console.log(keyCode);
-            console.log(strok);
-            console.log(context);
             const {x, y} = context.canvas.getBoundingClientRect();
-            console.log(y);
             if (keyCode === 13) {
-                drawLine(strok, { x, y });
+                console.log("e.target.style.color: "+ e.target.style.color.value);
+                drawLine(strok, { x1, y1 });
                 // context.canvas.removeChild(document.getElementById("canvasTextInput"));
                 document.body.removeChild(document.getElementById('canvasTextInput'));
+                // document.getElementById("myCanvasDraw").removeChild(document.getElementById('canvasTextInput'));
                 
                 // document.getElementById('canvasTextInput').parentNode.removeChild(document.getElementById('canvasTextInput'));
             }
         });
-        console.log(context.canvas.getBoundingClientRect().left);
-        var x1 = canvasCoords.left + x,
-            y1 = canvasCoords.top + y;
+        textarea.addEventListener('mousedown', mouseDownOnTextarea);
+
         textarea.type = 'text';
-        textarea.value = "x: " + x1 + " y: " + y1;
         textarea.style.top = y1 + 'px';
         textarea.style.left = x1 + 'px';
         textarea.style.position = "fixed";
+        textarea.style.color = color;
+        textarea.placeholder = "Type here!!";
+        // textarea.addEventListener('mousedown', function(){
+        //     mouseDownOnTextarea(textarea, x, y, canvasCoords, textreaHeight, textreaWidth);
+        // }, false);
         textarea.focus();
         document.body.appendChild(textarea);
         // document.body.appendChild(textarea);
-        console.log(textarea.style.left);
-        console.log(textarea.style.top);
       }, false);
 
-      context.closePath();
-    context.stroke();
-
-    
-    //drawLine(stroke, start, newPoint);
-    // let newCanvas = document.createElement("input");
-    // newCanvas.id = "sketcher";
-    // newCanvas.class = "ChemDoodleWebComponent";
-    // document.getElementById("myCanvas").appendChild(newCanvas);
     return [stroke];
   };
+
+  const rgb2hex = (rgb) => {
+    rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+    return (rgb && rgb.length === 4) ? "#" +
+     ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+     ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+     ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
+   }
 
   
 
   
   const drawLine = (item, { x, y }) => {
-      console.log(x);
-      console.log(y);
     context.save();
     context.beginPath();
     context.font = "25px Arial";
-    // context.fillStyle=item.color;
-    context.fillText(item.fillText, x, y);
+    context.strokeStyle = item.fillColor;
+    context.fillText(item.fillText,  item.points[0].x1 - item.canvasOrigin[0].left, 
+        item.points[0].y1 - item.canvasOrigin[0].top);
     context.closePath();
     context.stroke();
   };
 
   const mouseDownOnTextarea = (e) => {
+    const {top, left, bottom, right} = context.canvas.getBoundingClientRect();
+    const canvasCoords = offset(left, top);
+    // let {x, y} = 
+    // let x1 = left;
+    console.log("mousedowntextarea");
     var x = textarea.offsetLeft - e.clientX,
         y = textarea.offsetTop - e.clientY;
+
+    console.log("x: "+x);
+    console.log("y: "+y);
+    if(textarea.offsetLeft - e.clientX >= left && textarea.offsetLeft - e.clientX<= right){
+        x = textarea.offsetLeft - e.clientX;
+    }else{
+        if(textarea.offsetLeft - e.clientX < left){
+            x = left;
+        }else if(textarea.offsetLeft - e.clientX> right){
+            x = right;
+        }
+    }
+
+    if(textarea.offsetTop - e.clientY >= top && textarea.offsetTop - e.clientY<= bottom){
+        y = textarea.offsetTop - e.clientY;
+    }else{
+        if(textarea.offsetTop - e.clientY < top){
+            y = top;
+        }else if(textarea.offsetTop - e.clientY> bottom){
+            y = bottom;
+        }
+    }
+
+
+    let x1 = 0, y1=0;
+    let textreaWidth = "100";
+    let textreaHeight = "40";
+    console.log("top: "+top);
+    console.log("left: "+left);
+    console.log("textarea.offsetLeft: "+textarea.offsetLeft);
+    console.log("textarea.offsetTop: "+textarea.offsetTop);
+    console.log("e.clientX: "+e.clientX);
+    console.log("e.clientY: "+e.clientY);
+    
+
+    if((parseInt(x) + parseInt(canvasCoords.left) + parseInt(textreaWidth)) > right){
+        console.log("exceeded canvas right");
+        x1 = (parseInt(x) + parseInt(canvasCoords.left) - parseInt(textreaWidth));
+    }
+
+    if((parseInt(y) + parseInt(canvasCoords.top) + parseInt(textreaHeight)) > bottom){
+        console.log("exceeded canvas right");
+        y1 = (parseInt(y) + parseInt(canvasCoords.top) - parseInt(textreaHeight));
+    }
+    
     function drag(e) {
       textarea.style.left = e.clientX + x + 'px';
       textarea.style.top = e.clientY + y + 'px';
